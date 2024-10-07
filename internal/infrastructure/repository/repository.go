@@ -9,6 +9,7 @@ import (
 
 type IRepo interface {
 	Create(ctx context.Context, phone, username, password string) (int, error)
+	GetIdByCredentials(ctx context.Context, phone, password string) (int, error)
 
 	CreateSession(ctx context.Context, userId int) (string, error)
 

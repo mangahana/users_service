@@ -8,7 +8,7 @@ import (
 )
 
 type UseCase interface {
-	// SignIn(ctx context.Context, dto *core.SignInDTO) (string, error)
+	SignIn(ctx context.Context, dto *core.SignInDTO) (string, error)
 	Join(ctx context.Context, phone string) error
 	Register(ctx context.Context, dto *core.RegisterDTO) (string, error)
 	Confirmation(ctx context.Context, dto *core.ConfirmationDTO) error

@@ -26,4 +26,5 @@ func (h *Handler) Register() {
 	h.router.POST("/join", h.join)
 	h.router.POST("/confirmation", h.confirmation)
 	h.router.POST("/register", h.register)
+	h.router.POST("/signin", h.signIn)
 }
