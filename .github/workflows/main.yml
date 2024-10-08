@@ -17,5 +17,33 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Remove old files
+        run: |
+          ssh github-action-user@${{ secrets.SERVER_IP }} "cd ./users_service && rm -r *"
         
-    
+      - name: Copy files via SCP
+        run: |
+          scp -r -o StrictHostKeyChecking=no ./* github-action-user@${{ secrets.SERVER_IP }}:/home/github-action-user/users_service
+
+      - name: Remove old container
+        run: |
+          ssh github-action-user@${{ secrets.SERVER_IP }} "docker rm -f users_service"
+
+      - name: Remove old image
+        run: |
+          ssh github-action-user@${{ secrets.SERVER_IP }} "docker image rm -f users_service"
+
+      - name: Build container
+        run: |
+          ssh github-action-user@${{ secrets.SERVER_IP }} "docker build -t users_service ./users_service"
+
+      - name: Run container
+        run: |
+          ssh github-action-user@${{ secrets.SERVER_IP }} \
+            "docker run --name users_service -d --rm --network=host --restart=always \ 
+            -v /var/www/static:/app/uploads \
+            -e HTTP_SOCKET=${{ secrets.HTTP_SOCKET }} -e GRPC_SOCKET=${{ secrets.GRPC_SOCKET }} -e UPLOAD_FOLDER=${{ secrets.UPLOAD_FOLDER }} \
+            -e DB_HOST=${{ secrets.DB_HOST }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASS=${{ secrets.DB_PASS }} \
+            -e SMS_API_KEY=${{ secrets.SMS_API_KEY }} -e SMS_API_DOMAIN=${{ secrets.SMS_API_DOMAIN }} \
+            -it users_service"
