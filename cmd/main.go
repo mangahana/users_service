@@ -29,9 +29,9 @@ func main() {
 	smsService := sms.New(&config.SMS)
 
 	repo := repository.New(db)
-	useCase := application.New(repo, smsService)
+	useCase := application.New(repo, smsService, config.FS.UploadFolder)
 
-	httpServer := http.New(useCase)
+	httpServer := http.New(useCase, config.FS.UploadFolder)
 	httpServer.Register()
 	go httpServer.ListenAndServe(config.Server.HttpSocket)
 

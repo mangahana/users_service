@@ -6,17 +6,20 @@ import (
 	"users_service/internal/transport/http/handler"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type HttpServer struct {
-	server  *echo.Echo
-	useCase application.UseCase
+	server       *echo.Echo
+	useCase      application.UseCase
+	uploadFolder string
 }
 
-func New(useCase application.UseCase) *HttpServer {
+func New(useCase application.UseCase, uploadFolder string) *HttpServer {
 	return &HttpServer{
-		server:  echo.New(),
-		useCase: useCase,
+		server:       echo.New(),
+		useCase:      useCase,
+		uploadFolder: uploadFolder,
 	}
 }
 
@@ -29,8 +32,9 @@ func (h *HttpServer) Shutdown(ctx context.Context) error {
 }
 
 func (h *HttpServer) Register() {
-	baseUrl := h.server.Group("/api/v1")
+	h.server.Use(middleware.BodyLimit("10M"))
+	baseUrl := h.server.Group("/api/v1/users")
 
-	handler := handler.New(baseUrl, h.useCase)
+	handler := handler.New(baseUrl, h.useCase, h.uploadFolder)
 	handler.Register()
 }

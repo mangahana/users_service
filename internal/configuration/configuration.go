@@ -9,6 +9,10 @@ type DBConfig struct {
 	Name string `env:"DB_NAME"`
 }
 
+type FSConfig struct {
+	UploadFolder string `env:"UPLOAD_FOLDER"`
+}
+
 type ServerConfig struct {
 	HttpSocket string `env:"HTTP_SOCKET"`
 	GrpcSocket string `env:"GRPC_SOCKET"`
@@ -23,6 +27,7 @@ type Config struct {
 	DB     DBConfig
 	Server ServerConfig
 	SMS    SMSConfig
+	FS     FSConfig
 }
 
 func Load() (*Config, error) {

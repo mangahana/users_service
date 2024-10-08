@@ -20,3 +20,8 @@ type ConfirmationDTO struct {
 	Phone            string `json:"phone" validate:"required,min=10,max=10"`
 	ConfirmationCode string `json:"confirmation_code" validate:"required,min=6,max=6"`
 }
+
+type ChangePasswordDTO struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}

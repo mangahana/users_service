@@ -18,3 +18,4 @@ func GenerateRandomString(n int) (string, error) {
 
 	return string(ret), nil
 }
+
