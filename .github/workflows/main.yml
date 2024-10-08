@@ -20,7 +20,7 @@ jobs:
 
       - name: Remove old files
         run: |
-          ssh -o StrictHostKeyChecking=no github-action-user@${{ secrets.SERVER_IP }} "cd ./users_service && rm -r *"
+          ssh -o StrictHostKeyChecking=no github-action-user@${{ secrets.SERVER_IP }} "cd ./users_service && rm -rf *"
         
       - name: Copy files via SCP
         run: |
