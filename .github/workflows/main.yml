@@ -40,8 +40,7 @@ jobs:
 
       - name: Run container
         run: |
-         ssh github-action-user@${{ secrets.SERVER_IP }}
-         "docker run --name users_service -d --rm --network=host --restart=always \
+         ssh github-action-user@${{ secrets.SERVER_IP }} "docker run --name users_service -d --rm --network=host --restart=always \
           -v /var/www/static:/app/uploads \
           -e HTTP_SOCKET=${{ secrets.HTTP_SOCKET }} \
           -e GRPC_SOCKET=${{ secrets.GRPC_SOCKET }} \
