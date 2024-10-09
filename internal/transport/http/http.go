@@ -32,6 +32,7 @@ func (h *HttpServer) Shutdown(ctx context.Context) error {
 }
 
 func (h *HttpServer) Register() {
+	h.server.Use(middleware.CORS())
 	h.server.Use(middleware.BodyLimit("10M"))
 	baseUrl := h.server.Group("/api/v1/users")
 
