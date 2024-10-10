@@ -11,7 +11,7 @@ func (h *Handler) getMe(ctx echo.Context) error {
 
 	data, err := h.useCase.GetOne(ctx.Request().Context(), session.UserID)
 	if err != nil {
-		return ctx.NoContent(500)
+		return ctx.JSON(400, err.Error())
 	}
 
 	return ctx.JSON(200, data)

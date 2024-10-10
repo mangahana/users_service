@@ -3,9 +3,8 @@ package application
 import (
 	"context"
 	"crypto/rand"
-	"log"
 	"math/big"
-	"users_service/internal/core"
+	"users_service/internal/core/cerror"
 )
 
 func (u *useCase) Join(ctx context.Context, phone string) error {
@@ -14,16 +13,15 @@ func (u *useCase) Join(ctx context.Context, phone string) error {
 		return err
 	}
 	if phoneExists {
-		return core.ErrPhoneIsAlreadyInUse
+		return cerror.New(cerror.PHONE_USED, "the phone is already in use")
 	}
 
 	isSent, err := u.repo.IsCodeSent(ctx, phone)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	if isSent {
-		return core.ErrCodeAlreadySent
+		return cerror.New(cerror.CODE_SENT, "code has been sent")
 	}
 
 	confirmationCode, err := Code(6)
@@ -36,13 +34,7 @@ func (u *useCase) Join(ctx context.Context, phone string) error {
 		return err
 	}
 
-	err = u.repo.CreateConfirmationCode(ctx, phone, confirmationCode, "127.0.0.1")
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	return nil
+	return u.repo.CreateConfirmationCode(ctx, phone, confirmationCode, "127.0.0.1")
 }
 
 func Code(length int) (string, error) {

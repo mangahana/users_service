@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"slices"
 	"users_service/internal/core"
+	"users_service/internal/core/cerror"
 	"users_service/internal/models"
 
 	"github.com/labstack/echo/v4"
@@ -21,18 +22,18 @@ var exts = map[string]string{
 func (h *Handler) uploadPhoto(ctx echo.Context) error {
 	data, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
-		return ctx.NoContent(400)
+		return ctx.JSON(400, cerror.InvalidData().Error())
 	}
 
 	mime := http.DetectContentType(data)
 
 	if !slices.Contains(allowedMimeTypes, mime) {
-		return ctx.NoContent(500)
+		return ctx.JSON(400, cerror.UNSUPPORTED_FORMAT)
 	}
 
 	randomStr, err := core.GenerateRandomString(64)
 	if err != nil {
-		return ctx.NoContent(400)
+		return ctx.JSON(400, err.Error())
 	}
 
 	filename := randomStr + exts[mime]
@@ -41,8 +42,8 @@ func (h *Handler) uploadPhoto(ctx echo.Context) error {
 
 	err = h.useCase.UploadPhoto(ctx.Request().Context(), user.UserID, filename, mime, data)
 	if err != nil {
-		return ctx.NoContent(400)
+		return ctx.JSON(400, err.Error())
 	}
 
-	return ctx.String(200, "ok")
+	return ctx.NoContent(200)
 }
